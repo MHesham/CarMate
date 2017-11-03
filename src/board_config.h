@@ -1,0 +1,10 @@
+#ifndef __BOARD_CONFIG_H__
+#define __BOARD_CONFIG_H__
+
+#define CAN_MCP2515_CS_PIN 53
+#define STATUS_LED1 7
+#define STATUS_ERROR_LED 8
+#define REFERENCE_3V3_PIN A3
+#define LIGHT_SENSOR_PIN A1
+
+#endif // __BOARD_CONFIG_H__

@@ -1,0 +1,3 @@
+[submodule "lib/arduino-mcp2515"]
+	path = lib/arduino-mcp2515
+	url = https://github.com/MHesham/arduino-mcp2515.git
