@@ -1,5 +1,8 @@
 #include "common.h"
 #include <mcp2515.h>
+#include <Wire.h>
+#include <SparkFunHTU21D.h>
+#include <SparkFunMPL3115A2.h>
 #include "tasks_config.h"
 #include "board_config.h"
 
@@ -9,11 +12,14 @@ SemaphoreHandle_t xSpiLock = NULL;
 SemaphoreHandle_t xI2cLock = NULL;
 SemaphoreHandle_t xWeatherReadingLock = NULL;
 SemaphoreHandle_t xCarReadingLock = NULL;
+HTU21D xWeather;
+MPL3115A2 xPressure;
 
 struct WeatherReading {
   float fTempC;
   float fRh;
   float fLight;
+  float fAltitudeM;
 };
 
 struct CarReading {
@@ -107,42 +113,51 @@ void loop() {
 /*--------------------------------------------------*/
 //Returns the voltage of the light sensor based on the 3.3V rail
 //This allows us to ignore what VCC might be (an Arduino plugged into USB has VCC of 4.5 to 5.2V)
-float prvReadLightLevel()
+void prvReadWeather(WeatherReading *pxReading)
 {
   float fOperatingVoltage = analogRead(REFERENCE_3V3_PIN);
   float fLightSensor = analogRead(LIGHT_SENSOR_PIN);
+  float fTemp1C, fTemp2C;
 
   fOperatingVoltage = 3.3 / fOperatingVoltage; //The reference voltage is 3.3V
-  fLightSensor = fOperatingVoltage * fLightSensor;
-  return fLightSensor;
-}
+  pxReading->fLight = fOperatingVoltage * fLightSensor;
 
-float prvReadHumidity()
-{
-  return 0.0f;
-}
-
-float prvReadTempC()
-{
-  return 0.0f;
+  xSemaphoreTake(xI2cLock, portMAX_DELAY);
+  fTemp1C = xWeather.readTemperature();
+  pxReading->fRh = xWeather.readHumidity();
+  fTemp2C = xPressure.readTemp();
+  pxReading->fAltitudeM = xPressure.readAltitude();
+  /* The actual temp is the average between the 2 on-board temp sensors */
+  pxReading->fTempC = (fTemp1C + fTemp2C) / 2.0;
+  xSemaphoreGive(xI2cLock);
 }
 
 void prvTaskWeather(void *pvParameters)
 {
+  WeatherReading xCurrReading;
+
   xSemaphoreTake(xSerialLock, portMAX_DELAY);
   Serial << WEATHER_TASK_NAME " is starting\n";
   xSemaphoreGive(xSerialLock);
-  WeatherReading xCurrReading;
 
   pinMode(REFERENCE_3V3_PIN, INPUT);
   pinMode(LIGHT_SENSOR_PIN, INPUT);
 
+  xSemaphoreTake(xI2cLock, portMAX_DELAY);
+  xWeather.begin(Wire);
+  xPressure.begin();
+  /* Measure altitude above sea level in meters */
+  xPressure.setModeAltimeter();
+  /* According to the datasheet, 7 maps to 512ms sensor sampling periods */
+  xPressure.setOversampleRate(7);
+  /* Enable all three pressure and temp event flags */
+  xPressure.enableEventFlags();
+  xSemaphoreGive(xI2cLock);
+
   TickType_t xNextWakeTime = xTaskGetTickCount();
 
   for (;;) {
-    xCurrReading.fLight = prvReadLightLevel();
-    xCurrReading.fTempC = prvReadTempC();
-    xCurrReading.fRh = prvReadHumidity();
+    prvReadWeather(&xCurrReading);
 
     xSemaphoreTake(xWeatherReadingLock, portMAX_DELAY);
     xLastWeatherReading = xCurrReading;
@@ -184,9 +199,10 @@ void prvTaskStatusLog(void *pvParameters)
     xSemaphoreGive(xWeatherReadingLock);
 
     xSemaphoreTake(xSerialLock, portMAX_DELAY);
-    Serial << "Temp:" << xCurrWeatherReading.fTempC
-           << " RH:" << xCurrWeatherReading.fRh
-           << " Light:" << xCurrWeatherReading.fLight
+    Serial << "Temp(C):" << xCurrWeatherReading.fTempC
+           << " RH(%%):" << xCurrWeatherReading.fRh
+           << " Alt(m):" << xCurrWeatherReading.fAltitudeM
+           << " Light(V):" << xCurrWeatherReading.fLight
            << " | RPM:" << xCurrCarReading.uRpm
            << ".\n";
     xSemaphoreGive(xSerialLock);

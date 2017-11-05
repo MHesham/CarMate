@@ -1,3 +1,6 @@
 [submodule "lib/arduino-mcp2515"]
 	path = lib/arduino-mcp2515
 	url = https://github.com/MHesham/arduino-mcp2515.git
+[submodule "lib/SparkFun_HTU21D_Breakout_Arduino_Library"]
+	path = lib/SparkFun_HTU21D_Breakout_Arduino_Library
+	url = https://github.com/MHesham/SparkFun_HTU21D_Breakout_Arduino_Library.git
