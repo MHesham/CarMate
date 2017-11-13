@@ -4,3 +4,9 @@
 [submodule "lib/SparkFun_HTU21D_Breakout_Arduino_Library"]
 	path = lib/SparkFun_HTU21D_Breakout_Arduino_Library
 	url = https://github.com/MHesham/SparkFun_HTU21D_Breakout_Arduino_Library.git
+[submodule "lib/Arduino-LiquidCrystal-I2C-library"]
+	path = lib/Arduino-LiquidCrystal-I2C-library
+	url = https://github.com/MHesham/Arduino-LiquidCrystal-I2C-library.git
+[submodule "lib/Arduino_FreeRTOS_Library"]
+	path = lib/Arduino_FreeRTOS_Library
+	url = https://github.com/MHesham/Arduino_FreeRTOS_Library.git

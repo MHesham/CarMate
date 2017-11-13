@@ -1,5 +1,5 @@
 #include "common.h"
-#include "board_config.h"
+#include "board.h"
 
 void vApplicationMallocFailedHook(void);
 void vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName);
@@ -18,6 +18,10 @@ void vApplicationMallocFailedHook(void)
 	(although it does not provide information on how the remaining heap might be
 	fragmented).  See http://www.freertos.org/a00111.html for more
 	information. */
+	Serial.println("MF");
+	portNOP();
+	portNOP();
+	digitalWrite(boardERROR_HOOK_LED_PIN, HIGH);
 	configASSERT(0);
 }
 
@@ -31,14 +35,26 @@ void vApplicationStackOverflowHook(TaskHandle_t pxTask, char *pcTaskName)
 	function is called if a stack overflow is detected.  This function is
 	provided as an example only as stack overflow checking does not function
 	when running the FreeRTOS Windows port. */
+	Serial.println("OF");
+	portNOP();
+	portNOP();
 	configASSERT(0);
 }
 
-void vAssertCalled(const char * const pcFileName,
-                   const char * const pcFunctionName, unsigned long ulLine )
+void vAssertCalled( const char * const pcFileName,
+                    const char * const pcFunctionName, unsigned long ulLine )
 {
+	volatile unsigned long ulSetToNonZeroInDebuggerToContinue = 0;
 	/* Called if an assertion passed to configASSERT() fails.  See
 	http://www.freertos.org/a00110.html#configASSERT for more information. */
-  digitalWrite(STATUS_ERROR_LED, HIGH);
-  for (;;) {}
+	vTaskSuspendAll();
+	{
+		digitalWrite(boardSTATUS_LED_PIN, HIGH);
+
+  	while (ulSetToNonZeroInDebuggerToContinue == 0) {
+			portNOP();
+			portNOP();
+		}
+	}
+	xTaskResumeAll();
 }
