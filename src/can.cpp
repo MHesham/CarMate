@@ -1,7 +1,9 @@
 #include "common.h"
 #include <mcp2515.h>
+#include "carmate.h"
+#include "board.h"
+#include "tasks_config.h"
 
-SemaphoreHandle_t xCarReadingLock = NULL;
 QueueHandle_t xCanQueue = NULL;
 CarReading xLastCarReading;
 
@@ -12,10 +14,6 @@ void vCanInit(void)
   xCanQueue = xQueueCreate(CAN_QUEUE_LENGTH, sizeof(can_frame));
   configASSERT(xCanQueue);
 
-  xCarReadingLock = xSemaphoreCreateMutex();
-  configASSERT(xCarReadingLock);
-  xSemaphoreGive(xCarReadingLock);
-
 /*
   xTaskCreate(prvTaskCanSniff,
               CAN_SNIFF_TASK_NAME,
@@ -24,9 +22,7 @@ void vCanInit(void)
               CAN_SNIFF_TASK_PRIORITY,
               NULL);
 */
-  xSemaphoreTake(xSerialLock, portMAX_DELAY);
-  Serial << "CAN initialized\n";
-  xSemaphoreGive(xSerialLock);
+  vPrintf_P(PSTR("CAN started\n"));
 }
 
 void prvTaskCanSniff(void *pvParameters)

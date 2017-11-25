@@ -7,6 +7,9 @@
 [submodule "lib/Arduino-LiquidCrystal-I2C-library"]
 	path = lib/Arduino-LiquidCrystal-I2C-library
 	url = https://github.com/MHesham/Arduino-LiquidCrystal-I2C-library.git
-[submodule "lib/Arduino_FreeRTOS_Library"]
-	path = lib/Arduino_FreeRTOS_Library
-	url = https://github.com/MHesham/Arduino_FreeRTOS_Library.git
+[submodule "lib/FreeRTOS-Plus-Cpp"]
+	path = lib/FreeRTOS-Plus-Cpp
+	url = https://github.com/MHesham/FreeRTOS-Plus-Cpp.git
+[submodule "lib/Arduino_FreeRTOS-Plus-CLI"]
+	path = lib/Arduino_FreeRTOS-Plus-CLI
+	url = https://github.com/MHesham/Arduino_FreeRTOS-Plus-CLI.git

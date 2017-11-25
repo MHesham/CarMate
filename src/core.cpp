@@ -1,9 +1,16 @@
 #include "common.h"
+#include <Arduino.h>
+#include <timers.h>
+#include "carmate.h"
+#include "board.h"
+#include "tasks_config.h"
 
 TimerHandle_t xStatusLedTimer = NULL;
-SemaphoreHandle_t xSerialLock = NULL;
 SemaphoreHandle_t xSpiLock = NULL;
 SemaphoreHandle_t xI2cLock = NULL;
+SemaphoreHandle_t xCarReadingLock = NULL;
+SemaphoreHandle_t xWeatherReadingLock = NULL;
+EventGroupHandle_t xSystemEvents = NULL;
 
 /* Defined in main.c. */
 void vConfigureTimerForRunTimeStats( void )
@@ -27,18 +34,18 @@ void prvStatusLedTimerCallback( TimerHandle_t xTimer )
 
 void vCoreInit(void)
 {
-  // initialize serial communication at 9600 bits per second:
-  Serial.begin(115200);
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB, on LEONARDO,
-      // MICRO, YUN, and other 32u4 based boards.
-  }
-
   digitalWrite(boardSTATUS_LED_PIN, LOW);
   pinMode(boardSTATUS_LED_PIN, OUTPUT);
 
   digitalWrite(boardERROR_HOOK_LED_PIN, LOW);
   pinMode(boardERROR_HOOK_LED_PIN, OUTPUT);
+
+  Serial.begin(115200);
+	/* Initialise the UART. */
+	while (!Serial)
+  {
+
+  }
 
   xStatusLedTimer = xTimerCreate("StatusLedTimer", STATUS_LED_TIMER_PERIOD_TICKS,
                                  pdTRUE, 0, prvStatusLedTimerCallback);
@@ -46,19 +53,18 @@ void vCoreInit(void)
   BaseType_t xStatus = xTimerStart(xStatusLedTimer, 0);
   configASSERT(xStatus != pdFAIL);
 
-  xSerialLock = xSemaphoreCreateMutex();
-  configASSERT(xSerialLock);
-  xSemaphoreGive(xSerialLock);
-
   xSpiLock = xSemaphoreCreateMutex();
   configASSERT(xSpiLock);
-  xSemaphoreGive(xSpiLock);
 
   xI2cLock = xSemaphoreCreateMutex();
   configASSERT(xI2cLock);
-  xSemaphoreGive(xI2cLock);
 
-  xSemaphoreTake(xSerialLock, portMAX_DELAY);
-  Serial << "Core initialized\n";
-  xSemaphoreGive(xSerialLock);
+  xCarReadingLock = xSemaphoreCreateMutex();
+  configASSERT(xCarReadingLock);
+
+  xWeatherReadingLock = xSemaphoreCreateMutex();
+  configASSERT(xWeatherReadingLock);
+
+  xSystemEvents = xEventGroupCreate();
+  configASSERT(xSystemEvents);
 }

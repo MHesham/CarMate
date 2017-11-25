@@ -3,6 +3,7 @@
 .piolibdeps/
 .clang_complete
 .gcc-flags.json
+.vscode/
 
 # Prerequisites
 *.d
@@ -38,3 +39,4 @@
 *.app
 .pioenvs
 .piolibdeps
+.vscode/c_cpp_properties.json
