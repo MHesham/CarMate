@@ -40,12 +40,10 @@ void vCoreInit(void)
   digitalWrite(boardERROR_HOOK_LED_PIN, LOW);
   pinMode(boardERROR_HOOK_LED_PIN, OUTPUT);
 
-  Serial.begin(115200);
-	/* Initialise the UART. */
-	while (!Serial)
-  {
+  xSystemEvents = xEventGroupCreate();
+  configASSERT(xSystemEvents);
 
-  }
+  vSerialConsoleInit();
 
   xStatusLedTimer = xTimerCreate("StatusLedTimer", STATUS_LED_TIMER_PERIOD_TICKS,
                                  pdTRUE, 0, prvStatusLedTimerCallback);
@@ -64,7 +62,4 @@ void vCoreInit(void)
 
   xWeatherReadingLock = xSemaphoreCreateMutex();
   configASSERT(xWeatherReadingLock);
-
-  xSystemEvents = xEventGroupCreate();
-  configASSERT(xSystemEvents);
 }
