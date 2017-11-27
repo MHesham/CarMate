@@ -68,7 +68,6 @@
 */
 
 #include "common.h"
-#include <Arduino.h>
 #include <FreeRTOS_CLI.h>
 #include <lock.h>
 #include "carmate.h"

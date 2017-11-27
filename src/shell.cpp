@@ -1,5 +1,4 @@
 #include "common.h"
-#include <Arduino.h>
 #include <LiquidCrystal_I2C.h>
 #include "carmate.h"
 #include "tasks_config.h"

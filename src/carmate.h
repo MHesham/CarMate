@@ -32,5 +32,6 @@ void vCanInit(void);
 void vWeatherInit(void);
 void vShellInit(void);
 void vSerialConsoleInit(void);
+void vRegisterCLICommands(void);
 
 #endif  // __CARMATE_H__

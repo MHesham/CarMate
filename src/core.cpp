@@ -44,6 +44,7 @@ void vCoreInit(void)
   configASSERT(xSystemEvents);
 
   vSerialConsoleInit();
+  vRegisterCLICommands();
 
   xStatusLedTimer = xTimerCreate("StatusLedTimer", STATUS_LED_TIMER_PERIOD_TICKS,
                                  pdTRUE, 0, prvStatusLedTimerCallback);

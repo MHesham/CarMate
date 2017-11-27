@@ -1,5 +1,4 @@
 #include "common.h"
-#include <Arduino.h>
 #include <SparkFunHTU21D.h>
 #include <SparkFunMPL3115A2.h>
 #include <lock.h>

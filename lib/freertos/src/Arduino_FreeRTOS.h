@@ -100,6 +100,8 @@
 #include "portmacro.h"
 #include "portable.h"
 
+#include <Arduino.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
