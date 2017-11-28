@@ -101,11 +101,9 @@
 ******************************************************************************/
 
 /* FreeRTOS includes. */
-#include "Arduino_FreeRTOS.h"
-#include "task.h"
-
-/* FreeRTOS+CLI includes. */
+#include <Arduino_FreeRTOS.h>
 #include <FreeRTOS_CLI.h>
+#include "task.h"
 
 /*
  * Implements the run-time-stats command.

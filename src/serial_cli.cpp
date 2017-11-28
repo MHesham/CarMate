@@ -67,11 +67,12 @@
     1 tab == 4 spaces!
 */
 
-#include "common.h"
+#include <Arduino_FreeRTOS.h>
 #include <FreeRTOS_CLI.h>
 #include <lock.h>
 #include "carmate.h"
 #include "tasks_config.h"
+#include "utils.h"
 
 /* Dimensions the buffer into which input characters are placed. */
 #define cmdMAX_INPUT_SIZE 50

@@ -1,7 +1,8 @@
-#include "common.h"
+#include <Arduino_FreeRTOS.h>
 #include <LiquidCrystal_I2C.h>
 #include "carmate.h"
 #include "tasks_config.h"
+#include "utils.h"
 
 void prvTaskDisplay(void *pvParameters);
 void prvTaskStatusLog(void *pvParameters);
@@ -20,8 +21,8 @@ void vShellInit(void) {
 void prvTaskDisplay(void *pvParameters) {
   WeatherReading xCurrWeatherReading;
   // set the LCD address to 0x27 for a 16 chars and 2 line display
-  LiquidCrystal_I2C lcd(0x27, 16, 2, LCD_5x8DOTS, prvDelay,
-                        prvDelayMicroseconds);
+  LiquidCrystal_I2C lcd(0x27, 16, 2, LCD_5x8DOTS, vDelay,
+                        vDelayMicroseconds);
 
   xSemaphoreTake(xI2cLock, portMAX_DELAY);
   lcd.begin();

@@ -1,8 +1,10 @@
-#include "common.h"
+
+#include <Arduino_FreeRTOS.h>
 #include <mcp2515.h>
 #include "carmate.h"
 #include "board.h"
 #include "tasks_config.h"
+#include "utils.h"
 
 QueueHandle_t xCanQueue = NULL;
 CarReading xLastCarReading;
@@ -28,7 +30,7 @@ void vCanInit(void)
 void prvTaskCanSniff(void *pvParameters)
 {
   can_frame xCanMsg;
-  MCP2515 xCanBus(boardCAN_MCP2515_CS_PIN, prvDelay, prvMillis);
+  MCP2515 xCanBus(boardCAN_MCP2515_CS_PIN, vDelay, vMillis);
 
   xSemaphoreTake(xSpiLock, portMAX_DELAY);
   xCanBus.reset();

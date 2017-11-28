@@ -1,9 +1,10 @@
-#include "common.h"
-#include <Arduino.h>
+
+#include <Arduino_FreeRTOS.h>
 #include <timers.h>
 #include "carmate.h"
 #include "board.h"
 #include "tasks_config.h"
+#include "utils.h"
 
 TimerHandle_t xStatusLedTimer = NULL;
 SemaphoreHandle_t xSpiLock = NULL;
@@ -11,21 +12,6 @@ SemaphoreHandle_t xI2cLock = NULL;
 SemaphoreHandle_t xCarReadingLock = NULL;
 SemaphoreHandle_t xWeatherReadingLock = NULL;
 EventGroupHandle_t xSystemEvents = NULL;
-
-/* Defined in main.c. */
-void vConfigureTimerForRunTimeStats( void )
-{
-  TCCR3A = 0;
-  TCCR3B = 0;
-  TCNT3 = 0;
-  // Set CS31 bit so timer runs at clock speed / 8 = 2KHz
-  TCCR3B |= (1 << CS31);
-}
-
-unsigned long vGetTimerForRunTimeStats( void )
-{
-  return TCNT3;
-}
 
 void prvStatusLedTimerCallback( TimerHandle_t xTimer )
 {
