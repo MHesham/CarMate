@@ -13,15 +13,15 @@ void vCanInit(void)
 {
   memset(&xLastCarReading, 0x0, sizeof(xLastWeatherReading));
 
-  xCanQueue = xQueueCreate(CAN_QUEUE_LENGTH, sizeof(can_frame));
+  xCanQueue = xQueueCreate(tskcfgCAN_TASK_QUEUE_LENGTH, sizeof(can_frame));
   configASSERT(xCanQueue);
 
 /*
   xTaskCreate(prvTaskCanSniff,
-              CAN_SNIFF_TASK_NAME,
-              CAN_SNIFF_STACK_SIZE,
+              CAN_TASK_NAME,
+              CAN_TASK_STACK_SIZE,
               NULL,
-              CAN_SNIFF_TASK_PRIORITY,
+              CAN_TASK_PRIORITY,
               NULL);
 */
   vPrintf_P(PSTR("CAN started\n"));
@@ -49,6 +49,6 @@ void prvTaskCanSniff(void *pvParameters)
       xQueueSend(xCanQueue, &xCanMsg, portMAX_DELAY);
     };
 
-    vTaskDelayUntil(&xNextWakeTime, CAN_SNIFF_TASK_PERIOD_TICKS);
+    vTaskDelayUntil(&xNextWakeTime, tskcfgCAN_TASK_PERIOD_TICKS);
   }
 }

@@ -6,7 +6,8 @@
 #include <event_groups.h>
 
 struct WeatherReading {
-  float fTempC;
+  float fTemp1C;
+  float fTemp2C;
   float fRh;
   float fLight;
   float fAltitudeM;

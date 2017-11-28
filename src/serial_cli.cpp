@@ -139,12 +139,12 @@ void vSerialConsoleInit() {
   xTaskCreate(
       prvSerialConsoleTask, /* The task that implements the command
                                     console. */
-      "CLI", /* Text name assigned to the task.  This is just to assist
+      tskcfgCONSOLE_TASK_NAME, /* Text name assigned to the task.  This is just to assist
                 debugging.  The kernel does not use this name itself. */
-      CONSOLE_TASK_STACK_SIZE, /* The size of the stack allocated to the task.
+      tskcfgCONSOLE_TASK_STACK_SIZE, /* The size of the stack allocated to the task.
                                   */
       NULL,                  /* The parameter is not used, so NULL is passed. */
-      CONSOLE_TASK_PRIORITY, /* The priority allocated to the task. */
+      tskcfgCONSOLE_TASK_PRIORITY, /* The priority allocated to the task. */
       NULL);                 /* A handle is not required, so just pass NULL. */
 
   vPrintf_P(PSTR("Serial console started\n"));

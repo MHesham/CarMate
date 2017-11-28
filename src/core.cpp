@@ -13,13 +13,11 @@ SemaphoreHandle_t xCarReadingLock = NULL;
 SemaphoreHandle_t xWeatherReadingLock = NULL;
 EventGroupHandle_t xSystemEvents = NULL;
 
-void prvStatusLedTimerCallback( TimerHandle_t xTimer )
-{
+void prvStatusLedTimerCallback(TimerHandle_t xTimer) {
   digitalWrite(boardSTATUS_LED_PIN, !digitalRead(boardSTATUS_LED_PIN));
 }
 
-void vCoreInit(void)
-{
+void vCoreInit(void) {
   digitalWrite(boardSTATUS_LED_PIN, LOW);
   pinMode(boardSTATUS_LED_PIN, OUTPUT);
 
@@ -32,8 +30,9 @@ void vCoreInit(void)
   vSerialConsoleInit();
   vRegisterCLICommands();
 
-  xStatusLedTimer = xTimerCreate("StatusLedTimer", STATUS_LED_TIMER_PERIOD_TICKS,
-                                 pdTRUE, 0, prvStatusLedTimerCallback);
+  xStatusLedTimer =
+      xTimerCreate("StatusLedTimer", tskcfgSTATUS_LED_TIMER_PERIOD_TICKS,
+                   pdTRUE, 0, prvStatusLedTimerCallback);
   configASSERT(xStatusLedTimer);
   BaseType_t xStatus = xTimerStart(xStatusLedTimer, 0);
   configASSERT(xStatus != pdFAIL);

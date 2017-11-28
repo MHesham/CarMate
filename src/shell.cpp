@@ -8,11 +8,8 @@ void prvTaskDisplay(void *pvParameters);
 void prvTaskStatusLog(void *pvParameters);
 
 void vShellInit(void) {
-  xTaskCreate(prvTaskDisplay,
-              DISPLAY_TASK_NAME,
-              DISPLAY_STACK_SIZE,
-              NULL,
-              DISPLAY_TASK_PRIORITY,
+  xTaskCreate(prvTaskDisplay, tskcfgDISPLAY_TASK_NAME,
+              tskcfgDISPLAY_TASK_STACK_SIZE, NULL, tskcfgDISPLAY_TASK_PRIORITY,
               NULL);
 
   vPrintf_P(PSTR("Shell started\n"));
@@ -21,8 +18,7 @@ void vShellInit(void) {
 void prvTaskDisplay(void *pvParameters) {
   WeatherReading xCurrWeatherReading;
   // set the LCD address to 0x27 for a 16 chars and 2 line display
-  LiquidCrystal_I2C lcd(0x27, 16, 2, LCD_5x8DOTS, vDelay,
-                        vDelayMicroseconds);
+  LiquidCrystal_I2C lcd(0x27, 16, 2, LCD_5x8DOTS, vDelay, vDelayMicroseconds);
 
   xSemaphoreTake(xI2cLock, portMAX_DELAY);
   lcd.begin();
@@ -36,10 +32,13 @@ void prvTaskDisplay(void *pvParameters) {
     xCurrWeatherReading = xLastWeatherReading;
     xSemaphoreGive(xWeatherReadingLock);
 
+    float fTempC = xCurrWeatherReading.fTemp1C + xCurrWeatherReading.fTemp2C;
+    fTempC /= 2.0;
+
     xSemaphoreTake(xI2cLock, portMAX_DELAY);
     lcd.clear();
     lcd.setCursor(0, 0);
-    lcd << xCurrWeatherReading.fTempC << "C ";
+    lcd << fTempC << "C ";
     lcd << xCurrWeatherReading.fRh << "RH";
     xSemaphoreGive(xI2cLock);
 
@@ -51,6 +50,6 @@ void prvTaskDisplay(void *pvParameters) {
     lcd << xCurrWeatherReading.fLight << "V";
     xSemaphoreGive(xI2cLock);
 
-    vTaskDelayUntil(&xNextWakeTime, DISPLAY_TASK_PERIOD_TICKS);
+    vTaskDelayUntil(&xNextWakeTime, tskcfgDISPLAY_TASK_PERIOD_TICKS);
   }
 }

@@ -1,6 +1,6 @@
 #include <Arduino_FreeRTOS.h>
 
-static TickType_t ulTimerTicks;
+static unsigned long ulTimerTicks;
 
 void vConfigureTimerForRunTimeStats(void) {
   ulTimerTicks = 0;
@@ -47,4 +47,5 @@ void vConfigureTimerForRunTimeStats(void) {
 
 unsigned long vGetTimerForRunTimeStats(void) { return ulTimerTicks; }
 
+ISR(TIMER3_COMPA_vect) __attribute__((hot, flatten));
 ISR(TIMER3_COMPA_vect) { ++ulTimerTicks; }
